@@ -115,7 +115,7 @@ public class system extends HttpServlet {
         }
         //テンプレートファイルを読む
         Keijiban ts = new Keijiban();
-        ts.open(this, "Template.html");
+        ts.open(this, "index.html");
         //タイトルの置換
         ts.replace("$(TITLE)", TITLE);
 

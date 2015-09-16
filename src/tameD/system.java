@@ -6,6 +6,7 @@ import java.io.PrintWriter;
 import java.net.URL;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Calendar;
 import java.util.Scanner;
 
 import javax.servlet.ServletContext;
@@ -61,7 +62,14 @@ public class system extends HttpServlet {
 
 			//テーブルが無ければ作成
 			if(!mOracle.isTable("exam01"))
-				mOracle.execute("create table exam01(msg varchar(200))");
+				mOracle.execute("create table exam01(comID number,usNAME varchar2(50),usID number"
+								+ ",comDATE DATE,comMSG varchar(200))");
+			if(!mOracle.isTable("genre"))
+				mOracle.execute("create table genre(genID number,genNAME varchar2(50),)");
+			if(!mOracle.isTable("kiji"))
+				mOracle.execute("create table kiji(kijiID number,kijiTITLE varchar2(100),kijiMSG varchar(200)"
+								+ " FOREIGN KEY (genID)REFERENCES genre(genID) )");
+
 			} catch (Exception e) {
 			System.err.println("db.txtにユーザ情報が設定されていない、もしくは認証に失敗しました");
 		}
@@ -128,11 +136,14 @@ public class system extends HttpServlet {
 			while(res.next())
 			{
 				String data = res.getString(1);
+				//日付の受け取り
+				Calendar cal = Calendar.getInstance();
+				cal.setTime(res.getDate(2));
 				if(data != null)
 				{
 					//文字列バッファにメッセージ内容を貯める
 					//CONVERTはタグの無効化
-					sb.append(String.format("<hr>%s<BR>\n", CONVERT(data)));
+					sb.append(String.format("<hr>%d:%s:%d<BR>%d年%d月%d日 %d時%d分%d秒<br>\n", CONVERT(data)));
 				}
 			}
 			//メッセージの置換

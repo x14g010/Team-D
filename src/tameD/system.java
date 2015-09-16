@@ -62,12 +62,12 @@ public class system extends HttpServlet {
 
 			//テーブルが無ければ作成
 			if(!mOracle.isTable("exam01"))
-				mOracle.execute("create table exam01(comID number,usNAME varchar2(50),usID number"
+				mOracle.execute("create table exam01(comID number auto_increment,usNAME varchar2(50),usID number"
 								+ ",comDATE DATE,comMSG varchar(200))");
 			if(!mOracle.isTable("genre"))
-				mOracle.execute("create table genre(genID number,genNAME varchar2(50),)");
+				mOracle.execute("create table genre(genID number auto_increment,genNAME varchar2(50),)");
 			if(!mOracle.isTable("kiji"))
-				mOracle.execute("create table kiji(kijiID number,kijiTITLE varchar2(100),kijiMSG varchar(200)"
+				mOracle.execute("create table kiji(kijiID number auto_increment,kijiTITLE varchar2(100),kijiMSG varchar(200)"
 								+ " FOREIGN KEY (genID)REFERENCES genre(genID) )");
 
 			} catch (Exception e) {

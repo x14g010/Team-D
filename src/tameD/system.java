@@ -21,7 +21,7 @@ import javax.servlet.http.HttpServletResponse;
  */
 @WebServlet("/system")
 public class system extends HttpServlet {
-	private static final String TITLE = "";
+	private static final String TITLE = "掲示板";
 	private static final long serialVersionUID = 1L;
     private Oracle mOracle;
 
@@ -65,7 +65,7 @@ public class system extends HttpServlet {
 				mOracle.execute("create table exam01(comID number auto_increment,usNAME varchar2(50),usID number"
 								+ ",comDATE DATE,comMSG varchar(200))");
 			if(!mOracle.isTable("genre"))
-				mOracle.execute("create table genre(genID number auto_increment,genNAME varchar2(50),)");
+				mOracle.execute("create table genre(genID number auto_increment,genNAME varchar2(50))");
 			if(!mOracle.isTable("kiji"))
 				mOracle.execute("create table kiji(kijiID number auto_increment,kijiTITLE varchar2(100),kijiMSG varchar(200)"
 								+ " FOREIGN KEY (genID)REFERENCES genre(genID) )");
@@ -108,19 +108,6 @@ public class system extends HttpServlet {
         // 出力ストリームの取得
         PrintWriter out = response.getWriter();
 
-        //パラメータにデータがあった場合はDBへ挿入
-        String param1 = request.getParameter("data1");
-        if (param1 != null && param1.length() > 0)
-        {
-        	//UTF8をJava文字列に変換
-        	String data1 = new String(param1.getBytes("ISO-8859-1"),"UTF-8");
-        	//SQL文の作成 Oracle.STRはシングルクオートのエスケープ処理
-        	String sql = String.format("insert into exam01 values('%s')",Oracle.STR(data1));
-        	//デバッグ用
-        	System.out.println("DEBUG:SQL文 "+sql);
-        	//DBにSQL文を実行させる
-        	mOracle.execute(sql);
-        }
         //テンプレートファイルを読む
         Keijiban ts = new Keijiban();
         ts.open(this, "index.html");
@@ -129,25 +116,24 @@ public class system extends HttpServlet {
 
         //文字列保存用バッファの作成
         StringBuilder sb = new StringBuilder();
-
         //データの抽出
         try {
-			ResultSet res = mOracle.query("select * from exam01");
+			ResultSet res = mOracle.query("select genNAME from genre");
 			while(res.next())
 			{
 				String data = res.getString(1);
-				//日付の受け取り
+				//受け取り
 				Calendar cal = Calendar.getInstance();
 				cal.setTime(res.getDate(2));
 				if(data != null)
 				{
 					//文字列バッファにメッセージ内容を貯める
 					//CONVERTはタグの無効化
-					sb.append(String.format("<hr>%d:%s:%d<BR>%d年%d月%d日 %d時%d分%d秒<br>\n", CONVERT(data)));
+					sb.append(String.format("<hr>%sbr>", CONVERT(data)));
 				}
 			}
 			//メッセージの置換
-	        ts.replace("$(MSG)", sb.toString());
+	        ts.replace("$(GENRE)", sb.toString());
 		} catch (SQLException e) {}
 
         //内容の出力

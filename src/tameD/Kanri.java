@@ -13,7 +13,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 public class Kanri extends HttpServlet{
-	private static final String TITLE = "管理画面";
+	private static final String TITLE = "掲示板-管理画面";
 	private static final long serialVersionUID = 1L;
     private Oracle mOracle;
 
@@ -122,7 +122,7 @@ public class Kanri extends HttpServlet{
         		ts.replace("$(PAGE)", p4.getText());
         }
         else
-        	ts.replace("$(PAGE)", "デフォルト");
+        
 
 
         //内容の出力

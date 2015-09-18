@@ -61,14 +61,16 @@ public class system extends HttpServlet {
 			mOracle.connect("ux4", id, pass);
 
 			//テーブルが無ければ作成
-			if(!mOracle.isTable("exam01"))
-				mOracle.execute("create table exam01(comID number auto_increment,usNAME varchar2(50),usID number"
+			if(!mOracle.isTable("com"))
+				mOracle.execute("create table com(comID number,usNAME varchar2(50),usID number"
 								+ ",comDATE DATE,comMSG varchar(200))");
 			if(!mOracle.isTable("genre"))
-				mOracle.execute("create table genre(genID number auto_increment,genNAME varchar2(50))");
+				mOracle.execute("create table genre(genID number,genNAME varchar2(50))");
 			if(!mOracle.isTable("kiji"))
-				mOracle.execute("create table kiji(kijiID number auto_increment,kijiTITLE varchar2(100),kijiMSG varchar(200)"
-								+ " FOREIGN KEY (genID)REFERENCES genre(genID) )");
+				mOracle.execute("create table kiji(kijiID number,kijiTITLE varchar2(100),kijiMSG varchar(200),"
+								+ "kijiDATE DATE)");
+				mOracle.execute("create sequence seq");
+
 
 			} catch (Exception e) {
 			System.err.println("db.txtにユーザ情報が設定されていない、もしくは認証に失敗しました");
@@ -118,22 +120,59 @@ public class system extends HttpServlet {
         StringBuilder sb = new StringBuilder();
         //データの抽出
         try {
-			ResultSet res = mOracle.query("select genNAME from genre");
-			while(res.next())
+			//ジャンル読み込み
+        	ResultSet gen = mOracle.query("select * from genre");
+			while(gen.next())
 			{
-				String data = res.getString(1);
-				//受け取り
-				Calendar cal = Calendar.getInstance();
-				cal.setTime(res.getDate(2));
+				String data = gen.getString(2);
+
 				if(data != null)
 				{
 					//文字列バッファにメッセージ内容を貯める
 					//CONVERTはタグの無効化
-					sb.append(String.format("<hr>%sbr>", CONVERT(data)));
+					sb.append(String.format("<hr>%s<br>", CONVERT(data)));
 				}
 			}
 			//メッセージの置換
 	        ts.replace("$(GENRE)", sb.toString());
+	        //ジャンル選択時、ページの読み込み
+	        Keijiban p1 = new Keijiban();
+	        p1.open(this, "kijise.html");
+	      //パラメータによって内容を切り替え
+	        String param1 = request.getParameter("k");
+	        if (param1 != null && param1.length() > 0)
+	        {
+	        	int index =  Integer.parseInt(param1);
+	        	if(index == 1)
+	        		ts.replace("$(PAGE)", p1.getText());
+	        }
+	        else{
+        }
+
+
+	        //ジャンル記事読み込み
+	        ResultSet genk = mOracle.query("select * from kiji");
+			while(genk.next())
+			{
+				String data = genk.getString(2);
+				//日付受け取り
+				Calendar cal = Calendar.getInstance();
+				cal.setTime(genk.getDate(4));
+				if(data != null)
+				{
+					//文字列バッファにメッセージ内容を貯める
+					//CONVERTはタグの無効化
+					sb.append(String.format("<hr>%s:%d年%d月%d日 %d時%d分<br>", CONVERT(data),
+							cal.get(Calendar.YEAR),
+							cal.get(Calendar.MONTH)+1,
+							cal.get(Calendar.DAY_OF_MONTH),
+							cal.get(Calendar.HOUR_OF_DAY),
+							cal.get(Calendar.MINUTE)));
+				}
+			}
+			//メッセージの置換
+	        ts.replace("$(KIJISE)", sb.toString());
+
 		} catch (SQLException e) {}
 
         //内容の出力

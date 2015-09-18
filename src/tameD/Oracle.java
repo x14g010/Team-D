@@ -87,6 +87,7 @@ public class Oracle {
 
 	        } catch (SQLException e) {
 	            // 失敗メッセージの表示
+	            System.err.println(sql);
 	            System.err.println(e.getMessage());
 	            try {
 					// SQLの実行領域の解放

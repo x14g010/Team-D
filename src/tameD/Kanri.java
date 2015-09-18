@@ -122,7 +122,7 @@ public class Kanri extends HttpServlet{
         		ts.replace("$(PAGE)", p4.getText());
         }
         else
-        
+
 
 
         //内容の出力

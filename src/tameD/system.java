@@ -172,6 +172,9 @@ public class system extends HttpServlet {
 			}
 			//メッセージの置換
 	        ts.replace("$(KIJISE)", sb.toString());
+	        
+	        //管理者画面へ
+	        
 
 		} catch (SQLException e) {}
 

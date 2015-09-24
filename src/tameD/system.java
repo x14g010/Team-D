@@ -172,9 +172,69 @@ public class system extends HttpServlet {
 			}
 			//メッセージの置換
 	        ts.replace("$(KIJISE)", sb.toString());
-	        
+
+	        //記事コメント
+	      //パラメータにデータがあった場合はDBへ挿入
+	        String param2 = request.getParameter("data1");
+	        if (param1 != null && param1.length() > 0)
+	        {
+	        	//UTF8をJava文字列に変換
+	        	String data1 = new String(param1.getBytes("ISO-8859-1"),"UTF-8");
+	        	//SQL文の作成 Oracle.STRはシングルクオートのエスケープ処理
+	        	String sql = String.format("insert into com values(seq.nextval,'%s','%s',sysdate)",Oracle.STR(data1));
+	        	//デバッグ用
+	        	System.out.println("DEBUG:SQL文 "+sql);
+	        	//DBにSQL文を実行させる
+	        	mOracle.execute(sql);
+	        }
+	      //データの抽出
+	        try {
+				ResultSet res = mOracle.query("select * from com");
+				while(res.next())
+				{
+					String data = res.getString(5);
+					//日付の受け取り
+					Calendar cal = Calendar.getInstance();
+					cal.setTime(res.getDate(4));
+					if(data != null)
+					{
+						//文字列バッファにメッセージ内容を貯める
+						//CONVERTはタグの無効化
+						sb.append(String.format("<hr>%d:%s:%d:%d年%d月%d日 %d時%d分<br>%s<BR>\n",
+												cal.get(Calendar.YEAR),
+												cal.get(Calendar.MONTH)+1,
+												cal.get(Calendar.DAY_OF_MONTH),
+												cal.get(Calendar.HOUR_OF_DAY),
+												cal.get(Calendar.MINUTE),
+												 CONVERT(data)));
+					}
+				}
+				//メッセージの置換
+		        ts.replace("$(COM)", sb.toString());
+			} catch (SQLException e) {}
+
+	      //選択時、ページの読み込み
+	        Keijiban k1 = new Keijiban();
+	        k1.open(this, "kiji.html");
+
+	        //パラメータによって内容を切り替え
+	        String param3 = request.getParameter("k");
+	        if (param1 != null && param1.length() > 0)
+	        {
+	        	int index =  Integer.parseInt(param1);
+	        	if(index == 1)
+	        		ts.replace("$(PAGE)", k1.getText());
+	        	else if(index == 2)
+	        		ts.replace("$(PAGE)", k1.getText());
+	        	else if(index == 3)
+	        		ts.replace("$(PAGE)", k1.getText());
+	        	else if(index == 4)
+	        		ts.replace("$(PAGE)", k1.getText());
+	        }
+	        else{}
+
 	        //管理者画面へ
-	        
+
 
 		} catch (SQLException e) {}
 

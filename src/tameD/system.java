@@ -61,16 +61,16 @@ public class system extends HttpServlet {
 			mOracle.connect("ux4", id, pass);
 
 			//テーブルが無ければ作成
-			if(!mOracle.isTable("com"))
+			if(!mOracle.isTable("com")){
+				mOracle.execute("create sequence seq");
 				mOracle.execute("create table com(comID number,usNAME varchar2(50),usID number"
 								+ ",comDATE DATE,comMSG varchar(200))");
+			}
 			if(!mOracle.isTable("genre"))
 				mOracle.execute("create table genre(genID number,genNAME varchar2(50))");
 			if(!mOracle.isTable("kiji"))
 				mOracle.execute("create table kiji(kijiID number,kijiTITLE varchar2(100),kijiMSG varchar(200),"
 								+ "kijiDATE DATE)");
-				mOracle.execute("create sequence seq");
-
 
 			} catch (Exception e) {
 			System.err.println("db.txtにユーザ情報が設定されていない、もしくは認証に失敗しました");
@@ -124,13 +124,14 @@ public class system extends HttpServlet {
         	ResultSet gen = mOracle.query("select * from genre");
 			while(gen.next())
 			{
+				int id =gen.getInt(1);
 				String data = gen.getString(2);
 
 				if(data != null)
 				{
 					//文字列バッファにメッセージ内容を貯める
 					//CONVERTはタグの無効化
-					sb.append(String.format("<hr>%s<br>", CONVERT(data)));
+					sb.append(String.format("<hr><a href=\"?j=%d\">%s</a><br>", id,CONVERT(data)));
 				}
 			}
 			//メッセージの置換
@@ -139,7 +140,7 @@ public class system extends HttpServlet {
 	        Keijiban p1 = new Keijiban();
 	        p1.open(this, "kijise.html");
 	      //パラメータによって内容を切り替え
-	        String param1 = request.getParameter("k");
+	        String param1 = request.getParameter("j");
 	        if (param1 != null && param1.length() > 0)
 	        {
 	        	int index =  Integer.parseInt(param1);
@@ -171,7 +172,7 @@ public class system extends HttpServlet {
 				}
 			}
 			//メッセージの置換
-	        ts.replace("$(KIJI)", sb.toString());
+	        ts.replace("$(PAGE)", sb.toString());
 
 	        //記事コメント
 	      //パラメータにデータがあった場合はDBへ挿入

@@ -58,7 +58,7 @@ public class Oracle {
 	            return true;
 	        } catch (SQLException e) {
 	            //失敗メッセージの表示
-	            System.err.println(e.getMessage());
+	            System.err.println(sql+"\n"+e.getMessage());
 	            return false;
 	        }
 	        finally

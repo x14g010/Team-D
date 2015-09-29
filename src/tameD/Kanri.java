@@ -92,10 +92,10 @@ public class Kanri extends HttpServlet{
 
 
         //テンプレートファイルを読む
-        Keijiban ts = new Keijiban();
-        ts.open(this, "Kanri.html");
+        Keijiban ka = new Keijiban();
+        ka.open(this, "Kanri.html");
         //タイトルの置換
-        ts.replace("$(TITLE)", TITLE);
+        ka.replace("$(TITLE)", TITLE);
 
         //各ページの読み込み
         Keijiban p1 = new Keijiban();
@@ -113,20 +113,20 @@ public class Kanri extends HttpServlet{
         {
         	int index =  Integer.parseInt(param1);
         	if(index == 1)
-        		ts.replace("$(PAGE)", p1.getText());
+        		ka.replace("$(PAGE)", p1.getText());
         	else if(index == 2)
-        		ts.replace("$(PAGE)", p2.getText());
+        		ka.replace("$(PAGE)", p2.getText());
         	else if(index == 3)
-        		ts.replace("$(PAGE)", p3.getText());
+        		ka.replace("$(PAGE)", p3.getText());
         	else if(index == 4)
-        		ts.replace("$(PAGE)", p4.getText());
+        		ka.replace("$(PAGE)", p4.getText());
         }
         else
 
 
 
         //内容の出力
-        out.print(ts.getText());
+        out.print(ka.getText());
         //出力終了
         out.close();
 	}

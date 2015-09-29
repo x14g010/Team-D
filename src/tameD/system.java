@@ -119,6 +119,16 @@ public class system extends HttpServlet {
         //タイトルの置換
         ts.replace("$(TITLE)", TITLE);
 
+
+		//各ページの読み込み
+		Keijiban k1 = new Keijiban();
+        k1.open(this, "kiji.html");
+        Keijiban k2 = new Keijiban();
+        k2.open(this, "kijise.html");
+        Keijiban k3 = new Keijiban();
+        k3.open(this, "kanri.html");
+
+
         //文字列保存用バッファの作成
         StringBuilder sb = new StringBuilder();
         //データの抽出
@@ -145,8 +155,10 @@ public class system extends HttpServlet {
 
 	        //ジャンル記事読み込み
 	        ResultSet genk = mOracle.query("select * from kiji");
+	        String param2 = request.getParameter("k");
 			while(genk.next())
 			{
+				int id =genk.getInt(1);
 				String data = genk.getString(2);
 				//日付受け取り
 				Calendar cal = Calendar.getInstance();
@@ -155,7 +167,7 @@ public class system extends HttpServlet {
 				{
 					//文字列バッファにメッセージ内容を貯める
 					//CONVERTはタグの無効化
-					sb.append(String.format("<hr>%s:%d年%d月%d日 %d時%d分<br>", CONVERT(data),
+					sb.append(String.format("<hr><a href=\"?k=%d\">%s:%d年%d月%d日 %d時%d分<br>",id, CONVERT(data),
 							cal.get(Calendar.YEAR),
 							cal.get(Calendar.MONTH)+1,
 							cal.get(Calendar.DAY_OF_MONTH),
@@ -164,12 +176,12 @@ public class system extends HttpServlet {
 				}
 			}
 			//メッセージの置換
-	        ts.replace("$(PAGE)", sb.toString());
+	        k2.replace("$(KIJISE)", sb.toString());
 
 	        //記事内容
 	        //データの抽出
 	        try {
-				ResultSet res = mOracle.query("select * from com");
+				ResultSet res = mOracle.query("select * from kiji");
 				while(res.next())
 				{
 					String data = res.getString(5);
@@ -190,16 +202,16 @@ public class system extends HttpServlet {
 					}
 				}
 				//メッセージの置換
-		        ts.replace("$(KIJI)", sb.toString());
+		        k1.replace("$(KIJI)", sb.toString());
 			} catch (SQLException e) {}
 
 	        //記事コメント
 	        //パラメータにデータがあった場合はDBへ挿入
-	        String param2 = request.getParameter("data1");
-	        if (param2 != null && param2.length() > 0)
+	        String param3 = request.getParameter("data1");
+	        if (param3 != null && param3.length() > 0)
 	        {
 	        	//UTF8をJava文字列に変換
-	        	String data1 = new String(param2.getBytes("ISO-8859-1"),"UTF-8");
+	        	String data1 = new String(param3.getBytes("ISO-8859-1"),"UTF-8");
 	        	//SQL文の作成 Oracle.STRはシングルクオートのエスケープ処理
 	        	String sql = String.format("insert into com values(seq1.nextval,'%s','%s',sysdate)",Oracle.STR(data1));
 	        	//デバッグ用
@@ -209,13 +221,13 @@ public class system extends HttpServlet {
 	        }
 	      //データの抽出
 	        try {
-				ResultSet res = mOracle.query("select * from com");
-				while(res.next())
+				ResultSet com = mOracle.query("select * from com");
+				while(com.next())
 				{
-					String data = res.getString(5);
+					String data = com.getString(5);
 					//日付の受け取り
 					Calendar cal = Calendar.getInstance();
-					cal.setTime(res.getDate(4));
+					cal.setTime(com.getDate(4));
 					if(data != null)
 					{
 						//文字列バッファにメッセージ内容を貯める
@@ -230,7 +242,7 @@ public class system extends HttpServlet {
 					}
 				}
 				//メッセージの置換
-		        ts.replace("$(COM)", sb.toString());
+		        k1.replace("$(COM)", sb.toString());
 			} catch (SQLException e) {}
 
 

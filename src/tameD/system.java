@@ -64,16 +64,14 @@ public class system extends HttpServlet {
 			if(!mOracle.isTable("com")){
 				mOracle.execute("create sequence seq1");
 				mOracle.execute("create table com(comID number,usNAME varchar2(50),usID number"
-								+ ",comDATE DATE,comMSG varchar(200))");
+								+ ",comDATE DATE,comMSG varchar(200),kijiID number)");
 			}
 			if(!mOracle.isTable("genre")){
-				mOracle.execute("create sequence seq2");
 				mOracle.execute("create table genre(genID number,genNAME varchar2(50))");
 				}
 			if(!mOracle.isTable("kiji")){
-				mOracle.execute("create sequence seq3");
 				mOracle.execute("create table kiji(kijiID number,kijiTITLE varchar2(100),kijiMSG varchar(200),"
-								+ "kijiDATE DATE)");}
+								+ "kijiDATE DATE,genID number)");}
 
 			} catch (Exception e) {
 			System.err.println("db.txtにユーザ情報が設定されていない、もしくは認証に失敗しました");

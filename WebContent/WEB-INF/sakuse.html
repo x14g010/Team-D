@@ -10,10 +10,15 @@
 <!--[if IE]><script src="js/html5shiv.js"></script><![endif]-->
 </head>
 <body>
-記事作成<br>
-<input type="text" name="ktitle" size="20" maxlength="20"><br>
-<input type="text" name="knaiyou" size="50" maxlength="100"><br>
+	記事作成<br>
+	タイトル<br>
+	<input type="text" name="ktitle" size="20" maxlength="20"><br>
+	内容<br>
+	<textarea name="knaiyou" rows="20" cols="100"></textarea><br>
+	<select name="genre">
+	<option value="g">$(GENRE)</option>
+	</select>
 
-<a href="kanri.html"><input type="button" name="top" value="作成する"></a>
+	<a href="kanri.html"><input type="button" name="top" value="作成する"></a>
 </body>
 </html>

@@ -99,7 +99,7 @@ public class Kanri extends HttpServlet{
 
         //各ページの読み込み
         Keijiban p1 = new Keijiban();
-        p1.open(this, "saku.html");
+        p1.open(this, "sakujo.html");
         Keijiban p2 = new Keijiban();
         p2.open(this, "sakuse.html");
         Keijiban p3 = new Keijiban();

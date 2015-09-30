@@ -246,6 +246,22 @@ public class system extends HttpServlet {
 
 	        //管理者画面へ
 
+	      //パラメータによって内容を切り替え
+	        String param4 = request.getParameter("ke");
+	        if (param4 != null && param4.length() > 0)
+	        {
+	        	int index =  Integer.parseInt(param1);
+	        	if(index == 1)
+	        		ts.replace("$(PAGE)", k1.getText());
+	        	else if(index == 2)
+	        		ts.replace("$(PAGE)", k2.getText());
+	        	else if(index == 3)
+	        		ts.replace("$(PAGE)", k3.getText());
+
+	        }
+	        else
+	        	ts.replace("$(PAGE)", "");
+
 
 		} catch (SQLException e) {}
 

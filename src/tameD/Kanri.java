@@ -122,6 +122,7 @@ public class Kanri extends HttpServlet{
         		ka.replace("$(PAGE)", p4.getText());
         }
         else
+        	ka.replace("$(PAGE)", "");
 
 
 
